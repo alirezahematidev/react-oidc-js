@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`useAuth is empty 1`] = `
+<p
+  data-userData={null}
+  onClick={[Function]}
+/>
+`;
+
+exports[`useAuth login 1`] = `
+<p
+  data-userData={null}
+  onClick={[Function]}
+/>
+`;
