@@ -114,7 +114,7 @@ export const createUserManagerContext = (
 };
 
 export const useAuth = () => {
-  const { userManager, userData, removeUser } = useContext(Context);
+  const { userManager, userData, removeUser, isLoaded } = useContext(Context);
   const setUser = useStoreUserData();
 
   return {
@@ -122,5 +122,6 @@ export const useAuth = () => {
     userData,
     removeUser,
     setUser,
+    isLoaded,
   };
 };
