@@ -6,4 +6,5 @@ export const Context = createContext<{
   userData: User | null;
   setUserData: React.Dispatch<React.SetStateAction<User | null>>;
   removeUser: () => Promise<void>;
+  isLoaded: boolean;
 }>({} as any);

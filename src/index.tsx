@@ -9,6 +9,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Context } from "./context";
@@ -31,6 +32,7 @@ export const createUserManagerContext = (
 
   const Provider = ({ children }: { children: ReactNode }) => {
     const [userData, setUserData] = useState<User | null>(null);
+    const isLoaded = useRef(false);
 
     const removeUser = useCallback(async () => {
       await userManager.removeUser();
@@ -70,9 +72,16 @@ export const createUserManagerContext = (
     };
 
     useEffect(() => {
-      userManager.getUser().then((user) => {
-        setUserData(user);
-      });
+      userManager
+        .getUser()
+        .then((user) => {
+          isLoaded.current = true;
+          setUserData(user);
+        })
+        .catch(() => {
+          isLoaded.current = true;
+          setUserData(null);
+        });
     }, [userManager]);
 
     useEffect(() => {
@@ -87,6 +96,7 @@ export const createUserManagerContext = (
       () => ({
         userManager,
         userData,
+        isLoaded: isLoaded.current,
         setUserData,
         removeUser,
       }),
