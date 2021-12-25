@@ -8,11 +8,7 @@ export const useStoreUserData = () => {
   const { setUserData, userManager } = useContext(Context);
   return async (userData: UserResponse) => {
     if (!userData.access_token) return;
-    try {
-      const decodedAccessToken: any = jwtDecode(userData.access_token);
-    } catch (error) {
-      console.log("error", error);
-    }
+
     const decodedAccessToken: any = jwtDecode(userData.access_token);
 
     const profile: UserProfile = {
@@ -32,9 +28,10 @@ export const useStoreUserData = () => {
     if (!userConfig) {
       return;
     }
-    console.log({ userConfig });
 
     userManager.storeUser(userConfig);
     setUserData(userConfig);
+
+    return userConfig;
   };
 };
