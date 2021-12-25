@@ -16,7 +16,7 @@ import { useStoreUserData } from "./helpers";
 import { UserResponse } from "./types";
 
 interface UserManagerSettings extends OCUserManagerSettings {
-  onRefresh?: (user: User) => UserResponse;
+  onRefresh?: (user: User) => Promise<UserResponse>;
 }
 
 export const createUserManagerContext = (
