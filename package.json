@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "a wrapper for oidc-client-ts to work with react/react-native",
   "sideEffects": false,
   "main": "lib/index.js",
