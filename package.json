@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "a wrapper for oidc-client-ts to work with react/react-native",
   "sideEffects": false,
   "main": "lib/index.js",
@@ -49,8 +49,8 @@
     "prettier": "^2.5.1",
     "prettier-plugin-jsdoc": "^0.3.30",
     "react": "^17.0.2",
-    "react-test-renderer": "^17.0.2",
     "react-scripts": "^5.0.0",
+    "react-test-renderer": "^17.0.2",
     "typescript": "^4.5.4"
   },
   "peerDependencies": {
@@ -68,7 +68,7 @@
     "src"
   ],
   "dependencies": {
-    "oidc-client-ts": "^2.0.0-rc.3",
-    "jwt-decode": "^3.1.2"
+    "jwt-decode": "^3.1.2",
+    "oidc-client-ts": "^2.0.0-rc.3"
   }
 }
