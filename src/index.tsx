@@ -125,3 +125,5 @@ export const useAuth = () => {
     isLoaded,
   };
 };
+
+export type { User, UserManager };
