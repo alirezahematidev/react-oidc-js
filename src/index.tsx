@@ -32,7 +32,7 @@ export const createUserManagerContext = (
 
   const Provider = ({ children }: { children: ReactNode }) => {
     const [userData, setUserData] = useState<User | null>(null);
-    const isLoaded = useRef(false);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const removeUser = useCallback(async () => {
       await userManager.removeUser();
@@ -75,12 +75,12 @@ export const createUserManagerContext = (
       userManager
         .getUser()
         .then((user) => {
-          isLoaded.current = true;
           setUserData(user);
+          setIsLoaded(true);
         })
         .catch(() => {
-          isLoaded.current = true;
           setUserData(null);
+          setIsLoaded(true);
         });
     }, [userManager]);
 
@@ -96,11 +96,11 @@ export const createUserManagerContext = (
       () => ({
         userManager,
         userData,
-        isLoaded: isLoaded.current,
+        isLoaded,
         setUserData,
         removeUser,
       }),
-      [userManager, userData, setUserData, removeUser]
+      [userManager, userData, isLoaded, setUserData, removeUser]
     );
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
