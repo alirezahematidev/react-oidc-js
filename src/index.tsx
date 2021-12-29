@@ -13,7 +13,7 @@ import React, {
   useState,
 } from "react";
 import { Context } from "./context";
-import { useStoreUserData } from "./helpers";
+import { handleSetUserData, useStoreUserData } from "./helpers";
 import { UserResponse } from "./types";
 import { Log } from "./utils/Log";
 
@@ -48,7 +48,6 @@ export const createUserManagerContext = ({
       setUserData(null);
     }, []);
 
-    const storeUserDatas = useStoreUserData();
     _handleAccessTokenExpired = async () => {
       if (refreshing || !onRefresh) {
         return Promise.resolve(refreshing);
@@ -64,7 +63,7 @@ export const createUserManagerContext = ({
 
           const res = await onRefresh(user);
 
-          await storeUserDatas(res);
+          await handleSetUserData(res, userManager, setUserData);
           refreshing = null;
 
           resolve(res);
