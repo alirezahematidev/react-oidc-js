@@ -199,6 +199,7 @@ export class User {
     scope?: string;
     profile: UserProfile;
     expires_at?: number;
+    expires_in?: number;
     userState?: unknown;
   }) {
     this.id_token = args.id_token;
@@ -210,6 +211,7 @@ export class User {
     this.scope = args.scope;
     this.profile = args.profile;
     this.expires_at = args.expires_at;
+    this.expires_in = args.expires_in;
     this.state = args.userState;
   }
 

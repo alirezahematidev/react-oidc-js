@@ -29,8 +29,10 @@ export const createUserManagerContext = ({
 }: UserManagerSettings) => {
   let refreshing: Promise<User> | null = null;
 
-  Log.logger = console;
-  Log.level = Log.DEBUG;
+  if (logging) {
+    Log.logger = console;
+    Log.level = Log.DEBUG;
+  }
 
   const userManager = new UserManager(userManagerSettings);
   let _handleAccessTokenExpired: () => Promise<User | null>;
