@@ -1,4 +1,4 @@
-import { User, UserManager } from "oidc-client-ts";
+import { User, UserManager } from "./userManager";
 import { createContext } from "react";
 
 export const Context = createContext<{

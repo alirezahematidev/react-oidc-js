@@ -1,5 +1,5 @@
 import jwtDecode from "jwt-decode";
-import { User, UserProfile } from "oidc-client-ts";
+import { User, UserProfile } from "../userManager";
 import { useContext } from "react";
 import { Context } from "../context";
 import { UserResponse } from "../types";
@@ -17,7 +17,6 @@ export const useStoreUserData = () => {
 
     const userConfig = new User({
       session_state: "",
-      state: null,
       /** @todo Check for scope */
       scope: decodedAccessToken.scope.join(" "),
       id_token: decodedAccessToken.iat.toString(),

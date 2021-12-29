@@ -9,7 +9,6 @@ describe("useAuth", () => {
 
   const UserManagerContext = createUserManagerContext({
     client_id: "client_id",
-    redirect_uri: "",
     response_type: "password",
     authority: "authority",
     client_secret: "client_secret",
@@ -23,7 +22,7 @@ describe("useAuth", () => {
       await setUser({
         access_token: accessToken,
         refresh_token: "refresh_token",
-        expires_at: new Date().getTime() + 100000,
+        expires_at: 1640421466001,
         token_type: "token_type",
       });
     };

@@ -2,7 +2,7 @@ import {
   User,
   UserManager,
   UserManagerSettings as OCUserManagerSettings,
-} from "oidc-client-ts";
+} from "./userManager";
 import React, {
   ReactNode,
   useCallback,
@@ -15,15 +15,22 @@ import React, {
 import { Context } from "./context";
 import { useStoreUserData } from "./helpers";
 import { UserResponse } from "./types";
+import { Log } from "./utils/Log";
 
 interface UserManagerSettings extends OCUserManagerSettings {
   onRefresh?: (user: User) => Promise<UserResponse>;
+  logging?: boolean;
 }
 
-export const createUserManagerContext = (
-  userManagerSettings: UserManagerSettings
-) => {
+export const createUserManagerContext = ({
+  logging,
+  onRefresh,
+  ...userManagerSettings
+}: UserManagerSettings) => {
   let refreshing: Promise<User> | null = null;
+
+  Log.logger = console;
+  Log.level = Log.DEBUG;
 
   const userManager = new UserManager(userManagerSettings);
   let _handleAccessTokenExpired: () => Promise<User | null>;
@@ -41,7 +48,7 @@ export const createUserManagerContext = (
 
     const storeUserDatas = useStoreUserData();
     _handleAccessTokenExpired = async () => {
-      if (refreshing || !userManagerSettings.onRefresh) {
+      if (refreshing || !onRefresh) {
         return Promise.resolve(refreshing);
       }
       refreshing = new Promise<any>(async (resolve, reject) => {
@@ -53,7 +60,7 @@ export const createUserManagerContext = (
             throw new Error("");
           }
 
-          const res = await userManagerSettings.onRefresh!(user);
+          const res = await onRefresh(user);
 
           await storeUserDatas(res);
           refreshing = null;
@@ -72,6 +79,9 @@ export const createUserManagerContext = (
     };
 
     useEffect(() => {
+      userManager.events.addAccessTokenExpiring(handleAccessTokenExpired);
+      userManager.events.addAccessTokenExpired(handleAccessTokenExpired);
+
       userManager
         .getUser()
         .then((user) => {
@@ -82,12 +92,8 @@ export const createUserManagerContext = (
           setUserData(null);
           setIsLoaded(true);
         });
-    }, [userManager]);
-
-    useEffect(() => {
-      userManager.events.addAccessTokenExpired(handleAccessTokenExpired);
-
       return () => {
+        userManager.events.addAccessTokenExpiring(handleAccessTokenExpired);
         userManager.events.removeAccessTokenExpired(handleAccessTokenExpired);
       };
     }, []);
