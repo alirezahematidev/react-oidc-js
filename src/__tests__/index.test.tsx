@@ -9,10 +9,7 @@ describe("useAuth", () => {
 
   const UserManagerContext = createUserManagerContext({
     client_id: "client_id",
-    response_type: "password",
     authority: "authority",
-    client_secret: "client_secret",
-    automaticSilentRenew: false,
   });
 
   function TextInputTester() {

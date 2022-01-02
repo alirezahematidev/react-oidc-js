@@ -24,33 +24,8 @@ export type SigningKey = Record<string, string | string[]>;
 export interface OidcClientSettings {
   /** The URL of the OIDC/OAuth2 provider */
   authority: string;
-  metadataUrl?: string;
-  /** Provide metadata when authority server does not allow CORS on the metadata endpoint */
-  metadata?: Partial<OidcMetadata>;
-  /** Can be used to seed or add additional values to the results of the discovery request */
-  metadataSeed?: Partial<OidcMetadata>;
-  /** Provide signingKeys when authority server does not allow CORS on the jwks uri */
-  signingKeys?: SigningKey[];
-
   /** Your client application's identifier as registered with the OIDC/OAuth2 */
   client_id: string;
-  client_secret?: string;
-  /** The type of response desired from the OIDC/OAuth2 provider (default: "code") */
-  response_type?: string;
-  /** The scope being requested from the OIDC/OAuth2 provider (default: "openid") */
-  scope?: string;
-
-  /**
-   * Client authentication method that is used to authenticate when using the
-   * token endpoint (default: "client_secret_post")
-   *
-   * - "client_secret_basic": using the HTTP Basic authentication scheme
-   * - "client_secret_post": including the client credentials in the request body
-   *
-   * See https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication
-   */
-  client_authentication?: "client_secret_basic" | "client_secret_post";
-
   /** Optional protocol param */
   prompt?: string;
   /** Optional protocol param */
@@ -130,11 +105,6 @@ export class OidcClientSettingsStore {
   // client config
   public readonly client_id: string;
   public readonly client_secret: string | undefined;
-  public readonly response_type: string;
-  public readonly scope: string;
-  public readonly client_authentication:
-    | "client_secret_basic"
-    | "client_secret_post";
 
   // optional protocol params
   public readonly prompt: string | undefined;
@@ -160,18 +130,9 @@ export class OidcClientSettingsStore {
   public readonly extraTokenParams: Record<string, unknown>;
 
   public constructor({
-    // metadata related
     authority,
-    metadataUrl,
-    metadata,
-    signingKeys,
-    metadataSeed,
     // client related
     client_id,
-    client_secret,
-    response_type = DefaultResponseType,
-    scope = DefaultScope,
-    client_authentication = DefaultClientAuthentication,
     // optional protocol
     prompt,
     display,
@@ -194,16 +155,7 @@ export class OidcClientSettingsStore {
     extraTokenParams = {},
   }: OidcClientSettings) {
     this.authority = authority;
-    this.metadataUrl = metadataUrl;
-    this.metadata = metadata;
-    this.metadataSeed = metadataSeed;
-    this.signingKeys = signingKeys;
-
     this.client_id = client_id;
-    this.client_secret = client_secret;
-    this.response_type = response_type;
-    this.scope = scope;
-    this.client_authentication = client_authentication;
 
     this.prompt = prompt;
     this.display = display;
