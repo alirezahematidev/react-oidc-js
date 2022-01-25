@@ -36,15 +36,19 @@ export const createUserManagerContext = ({
 
   const userManager = new UserManager(userManagerSettings);
 
-  let _handleAccessTokenExpired: () => Promise<User | null>;
-
+  let _handleAccessTokenExpired: () => Promise<User | null> = async () => null;
   const handleAccessTokenExpired = () => _handleAccessTokenExpired();
+
+  let _removeUser: () => Promise<void> = async () => {
+    await userManager.removeUser();
+  };
+  const removeUser = () => _removeUser();
 
   const Provider = ({ children }: { children: ReactNode }) => {
     const [userData, setUserData] = useState<User | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    const removeUser = useCallback(async () => {
+    _removeUser = useCallback(async () => {
       await userManager.removeUser();
       setUserData(null);
     }, []);
@@ -124,6 +128,7 @@ export const createUserManagerContext = ({
   return {
     Provider,
     getUser,
+    removeUser,
     handleAccessTokenExpired,
   };
 };
