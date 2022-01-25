@@ -37,7 +37,7 @@ export const handleSetUserData = async (
     return;
   }
 
-  userManager.storeUser(userConfig);
+  await userManager.storeUser(userConfig);
   setUserData(userConfig);
 
   return userConfig;

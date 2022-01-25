@@ -35,6 +35,7 @@ export const createUserManagerContext = ({
   }
 
   const userManager = new UserManager(userManagerSettings);
+
   let _handleAccessTokenExpired: () => Promise<User | null>;
 
   const handleAccessTokenExpired = () => _handleAccessTokenExpired();
@@ -57,7 +58,6 @@ export const createUserManagerContext = ({
           const user = await userManager.getUser();
 
           if (!user?.refresh_token) {
-            await removeUser();
             throw new Error("");
           }
 
@@ -70,7 +70,7 @@ export const createUserManagerContext = ({
         } catch (err) {
           console.error("handleAccessTokenExpired", err);
 
-          removeUser();
+          await removeUser();
           refreshing = null;
           reject(err);
         }
@@ -107,25 +107,32 @@ export const createUserManagerContext = ({
         setUserData,
         removeUser,
       }),
-      [userManager, userData, isLoaded, setUserData, removeUser]
+      [userData, isLoaded, setUserData, removeUser]
     );
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
 
+  const getUser = async () => {
+    if (refreshing) {
+      await refreshing;
+    }
+
+    return userManager.getUser();
+  };
+
   return {
     Provider,
-    userManager,
+    getUser,
     handleAccessTokenExpired,
   };
 };
 
 export const useAuth = () => {
-  const { userManager, userData, removeUser, isLoaded } = useContext(Context);
+  const { userData, removeUser, isLoaded } = useContext(Context);
   const setUser = useStoreUserData();
 
   return {
-    userManager,
     userData,
     removeUser,
     setUser,
