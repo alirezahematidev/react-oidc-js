@@ -117,7 +117,7 @@ export const createUserManagerContext = ({
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
 
-  const getUser = async () => {
+  const getUserWaitRefresh = async () => {
     if (refreshing) {
       await refreshing;
     }
@@ -125,9 +125,14 @@ export const createUserManagerContext = ({
     return userManager.getUser();
   };
 
+  const getUser = async () => {
+    return userManager.getUser();
+  };
+
   return {
     Provider,
     getUser,
+    getUserWaitRefresh,
     removeUser,
     handleAccessTokenExpired,
   };
