@@ -16,6 +16,7 @@ import { Context } from "./context";
 import { handleSetUserData, useStoreUserData } from "./helpers";
 import { UserResponse } from "./types";
 import { Log } from "./utils/Log";
+import { createAxiosMiddle } from "./axiosMiddle";
 
 interface UserManagerSettings extends OCUserManagerSettings {
   onRefresh?: (user: User) => Promise<UserResponse>;
@@ -129,12 +130,20 @@ export const createUserManagerContext = ({
     return userManager.getUser();
   };
 
+  const axiosMiddle = createAxiosMiddle({
+    getUser,
+    getUserWaitRefresh,
+    handleAccessTokenExpired,
+    removeUser,
+  });
+
   return {
     Provider,
     getUser,
     getUserWaitRefresh,
     removeUser,
     handleAccessTokenExpired,
+    axiosMiddle,
   };
 };
 
