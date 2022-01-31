@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-js",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "a wrapper for oidc-client-ts to work with react/react-native",
   "sideEffects": false,
   "main": "lib/index.js",
@@ -56,8 +56,8 @@
     "typescript": "^4.5.4"
   },
   "peerDependencies": {
-    "react": ">=16.12",
     "axios": ">=0.25",
+    "react": ">=16.12",
     "react-native": ">=0.61"
   },
   "husky": {
