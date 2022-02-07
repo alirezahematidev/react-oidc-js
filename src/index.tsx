@@ -28,7 +28,7 @@ export const createUserManagerContext = ({
   onRefresh,
   ...userManagerSettings
 }: UserManagerSettings) => {
-  let refreshing: Promise<User> | null = null;
+  let refreshing: Promise<User | null> | null = null;
 
   if (logging) {
     Log.logger = console;
@@ -58,7 +58,7 @@ export const createUserManagerContext = ({
       if (refreshing || !onRefresh) {
         return refreshing;
       }
-      refreshing = new Promise<any>(async (resolve, reject) => {
+      refreshing = new Promise<User | null>(async (resolve, reject) => {
         try {
           const user = await userManager.getUser();
 
@@ -68,10 +68,14 @@ export const createUserManagerContext = ({
 
           const res = await onRefresh(user);
 
-          await handleSetUserData(res, userManager, setUserData);
+          const newUser = await handleSetUserData(
+            res,
+            userManager,
+            setUserData
+          );
           refreshing = null;
 
-          resolve(res);
+          resolve(newUser || null);
         } catch (err) {
           console.error("handleAccessTokenExpired", err);
 

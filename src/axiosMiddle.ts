@@ -42,6 +42,7 @@ function createAxiosMiddle({
               if (!error.config.headers) {
                 error.config.headers = {};
               }
+              delete error.config.headers.Authorization;
               error.config.headers.authorization = `bearer ${user?.access_token}`;
 
               return Promise.resolve(axiosInstance.request(error.config));
@@ -60,7 +61,10 @@ function createAxiosMiddle({
       async (requestConfig) => {
         // Do something before request is sent
         /** Example on how to add authorization based on security */
-        if (!requestConfig?.headers?.authorization) {
+        if (
+          !requestConfig?.headers?.authorization &&
+          !requestConfig?.headers?.Authorization
+        ) {
           let user;
           if (isRefreshTokenRequest(requestConfig)) {
             user = await getUser();
@@ -68,11 +72,10 @@ function createAxiosMiddle({
             user = await getUserWaitRefresh();
           }
 
-          if (!requestConfig?.headers) {
-            requestConfig.headers = {};
-          }
-
           if (user?.access_token) {
+            if (!requestConfig?.headers) {
+              requestConfig.headers = {};
+            }
             requestConfig.headers.authorization = `bearer ${user?.access_token}`;
           }
         }
