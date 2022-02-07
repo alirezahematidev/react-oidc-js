@@ -56,7 +56,7 @@ export const createUserManagerContext = ({
 
     _handleAccessTokenExpired = async () => {
       if (refreshing || !onRefresh) {
-        return Promise.resolve(refreshing);
+        return refreshing;
       }
       refreshing = new Promise<any>(async (resolve, reject) => {
         try {

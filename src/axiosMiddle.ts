@@ -43,8 +43,11 @@ function createAxiosMiddle({
                 error.config.headers = {};
               }
               error.config.headers.authorization = `bearer ${user?.access_token}`;
+
+              return Promise.resolve(axiosInstance.request(error.config));
             }
-            return Promise.resolve(axiosInstance.request(error.config));
+
+            removeUser();
           }
         }
 
