@@ -69,20 +69,6 @@ export class UserManagerEvents extends AccessTokenEvents {
     return this._userUnloaded.removeHandler(cb);
   }
 
-  /** Add callback: Raised when the automatic silent renew has failed. */
-  public addSilentRenewError(cb: SilentRenewErrorCallback): () => void {
-    return this._silentRenewError.addHandler(cb);
-  }
-  /** Remove callback: Raised when the automatic silent renew has failed. */
-  public removeSilentRenewError(cb: SilentRenewErrorCallback): void {
-    return this._silentRenewError.removeHandler(cb);
-  }
-  /** @internal */
-  public _raiseSilentRenewError(e: Error): void {
-    this._logger.debug("_raiseSilentRenewError", e.message);
-    this._silentRenewError.raise(e);
-  }
-
   /** Add callback: Raised when the user is signed in. */
   public addUserSignedIn(cb: UserSignedInCallback): () => void {
     return this._userSignedIn.addHandler(cb);

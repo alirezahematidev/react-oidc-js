@@ -15,25 +15,18 @@ import React, {
 import { Context } from "./context";
 import { handleSetUserData, useStoreUserData } from "./helpers";
 import { UserResponse } from "./types";
-import { Log } from "./utils/Log";
+import { Logger } from "./utils/Log";
 import { createAxiosMiddle } from "./axiosMiddle";
 
 interface UserManagerSettings extends OCUserManagerSettings {
   onRefresh?: (user: User) => Promise<UserResponse>;
-  logging?: boolean;
 }
 
 export const createUserManagerContext = ({
-  logging,
   onRefresh,
   ...userManagerSettings
 }: UserManagerSettings) => {
   let refreshing: Promise<User | null> | null = null;
-
-  if (logging) {
-    Log.logger = console;
-    Log.level = Log.DEBUG;
-  }
 
   const userManager = new UserManager(userManagerSettings);
 
@@ -42,6 +35,7 @@ export const createUserManagerContext = ({
 
   let _removeUser: () => Promise<void> = async () => {
     await userManager.removeUser();
+    Logger.info("User removed");
   };
   const removeUser = () => _removeUser();
 
@@ -52,37 +46,44 @@ export const createUserManagerContext = ({
     _removeUser = useCallback(async () => {
       await userManager.removeUser();
       setUserData(null);
+      Logger.info("User removed");
     }, []);
 
     _handleAccessTokenExpired = async () => {
+      Logger.info("Access token expired", new Date());
+
       if (refreshing || !onRefresh) {
         return refreshing;
       }
+
       refreshing = new Promise<User | null>(async (resolve, reject) => {
         try {
           const user = await userManager.getUser();
+          Logger.info("Access token expired", user?.expires_in);
 
           if (!user?.refresh_token) {
             throw new Error("");
           }
 
-          const res = await onRefresh(user);
+          const res = await onRefresh({} as any);
 
           const newUser = await handleSetUserData(
             res,
             userManager,
             setUserData
           );
-          refreshing = null;
 
           resolve(newUser || null);
+
+          Logger.info("Access token refreshed");
         } catch (err) {
-          console.error("handleAccessTokenExpired", err);
+          Logger.error((err as any)?.message);
 
           await removeUser();
-          refreshing = null;
           reject(err);
         }
+
+        refreshing = null;
       });
 
       return refreshing;
@@ -103,7 +104,7 @@ export const createUserManagerContext = ({
           setIsLoaded(true);
         });
       return () => {
-        userManager.events.addAccessTokenExpiring(handleAccessTokenExpired);
+        userManager.events.removeAccessTokenExpiring(handleAccessTokenExpired);
         userManager.events.removeAccessTokenExpired(handleAccessTokenExpired);
       };
     }, []);
@@ -124,6 +125,7 @@ export const createUserManagerContext = ({
 
   const getUserWaitRefresh = async () => {
     if (refreshing) {
+      Logger.info("Waiting for refresh");
       await refreshing;
     }
 

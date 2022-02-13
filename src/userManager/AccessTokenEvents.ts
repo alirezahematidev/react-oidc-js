@@ -71,6 +71,12 @@ export class AccessTokenEvents {
     this._expiringTimer.removeHandler(cb);
   }
 
+  public revokeOldAccessTokenTimers(newUser: User): void {
+    this._expiringTimer.cancel();
+    this._expiredTimer.cancel();
+    this.load(newUser);
+  }
+
   /** Add callback: Raised after the access token has expired. */
   public addAccessTokenExpired(cb: AccessTokenCallback): () => void {
     return this._expiredTimer.addHandler(cb);

@@ -37,20 +37,23 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
     "@react-native-community/async-storage": "^1.12.1",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.3",
     "@types/react": "^17.0.38",
     "@types/react-test-renderer": "^17.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.8.0",
-    "@typescript-eslint/parser": "^5.8.0",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
     "axios": "^0.25.0",
     "commitlint": "^8.3.5",
-    "eslint": "^8.5.0",
+    "eslint": "^8.9.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^4.2.3",
     "jest": "^27.4.5",
     "prettier": "^2.5.1",
     "prettier-plugin-jsdoc": "^0.3.30",
     "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-scripts": "^5.0.0",
     "react-test-renderer": "^17.0.2",
     "typescript": "^4.5.4"
@@ -63,7 +66,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn test"
+      "pre-commit": "yarn lint && yarn test -- --watchAll=false"
     }
   },
   "files": [

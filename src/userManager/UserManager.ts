@@ -74,6 +74,7 @@ export class UserManager {
       this._logger.debug("storeUser: storing user");
       const storageString = user.toStorageString();
       await this.settings.userStore.set(this._userStoreKey, storageString);
+      this._events.revokeOldAccessTokenTimers(user);
     } else {
       this._logger.debug("storeUser: removing user");
       await this.settings.userStore.remove(this._userStoreKey);

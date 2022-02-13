@@ -3,10 +3,12 @@ import { User, UserManager, UserProfile } from "../userManager";
 import { useContext } from "react";
 import { Context } from "../context";
 import { UserResponse } from "../types";
+import { Logger } from "../utils/Log";
 
 export const useStoreUserData = () => {
   const { setUserData, userManager } = useContext(Context);
   return async (userData: UserResponse) => {
+    Logger.info("Set new user data");
     return handleSetUserData(userData, userManager, setUserData);
   };
 };
