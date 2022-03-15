@@ -12,9 +12,7 @@
     "test": "react-scripts test",
     "lint": "eslint src/**/*.ts",
     "eslint-fix": "eslint src/**/*.ts --fix",
-    "prettier-fix": "prettier --write \"**/*.{ts,tsx}\"",
-    "release": "auto shipit",
-    "release-canary": "auto canary"
+    "prettier-fix": "prettier --write \"**/*.{ts,tsx}\""
   },
   "repository": {
     "type": "git",

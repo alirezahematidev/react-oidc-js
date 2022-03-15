@@ -65,7 +65,7 @@ export const createUserManagerContext = ({
             throw new Error("");
           }
 
-          const res = await onRefresh({} as any);
+          const res = await onRefresh(user);
 
           const newUser = await handleSetUserData(
             res,
