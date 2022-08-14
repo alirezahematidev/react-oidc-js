@@ -1,6 +1,4 @@
 ```js
-import { AUTHORIZATION } from "hitobit-constants";
-import { getDeviceId } from "hitobit-modules";
 import { ReactNode } from "react";
 import { createUserManagerContext,useAuth } from "react-oidc-js";
 
@@ -36,7 +34,7 @@ const {
       token_type: res.tokenType || "",
     };
   },
-  authority: "web.hitobit.com",
+  authority: "web.example.com",
   client_id: __CLIENT_ID__,
 });
 
