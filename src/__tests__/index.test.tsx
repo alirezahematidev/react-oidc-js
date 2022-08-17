@@ -76,7 +76,9 @@ describe("useAuth", () => {
 
     await act(() => sleep(1000));
 
-    const json = JSON.parse(response.getAttribute("data-userdata"));
+    const str = response.getAttribute("data-userdata");
+
+    const json = str ? JSON.parse(str) : null;
     expect(json).toHaveProperty("access_token", accessToken);
     expect(json).toHaveProperty("refresh_token", "refresh_token");
   }, 20000);
@@ -88,7 +90,9 @@ describe("useAuth", () => {
 
     const response = component.getByTestId("response");
 
-    const json = JSON.parse(response.getAttribute("data-userdata"));
+    const str = response.getAttribute("data-userdata");
+
+    const json = str ? JSON.parse(str) : null;
     expect(json).toHaveProperty("access_token", accessToken);
     expect(json).toHaveProperty("refresh_token", "refresh_token2");
   }, 20000);

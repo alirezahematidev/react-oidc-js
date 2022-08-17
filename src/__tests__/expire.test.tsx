@@ -64,35 +64,34 @@ describe("useAuth", () => {
     );
 
     expect(
-      component.getByTestId("response").getAttribute("data-userdata")
+      (await component.findByTestId("response")).getAttribute("data-userdata")
     ).toBe(null);
 
-    fireEvent.click(component.getByTestId("response"));
-    await act(() => sleep(2000));
+    fireEvent.click(await component.findByTestId("response"));
+    await act(() => sleep(500));
 
-    expect(
-      JSON.parse(
-        component.getByTestId("response").getAttribute("data-userdata")
-      ).refresh_token
-    ).toBe("refresh_token");
+    const str = (await component.findByTestId("response")).getAttribute(
+      "data-userdata"
+    );
+    expect(str ? JSON.parse(str).refresh_token : null).toBe("refresh_token");
 
-    expect((await UserManagerContext.getUser()).refresh_token).toBe(
+    expect((await UserManagerContext.getUser())?.refresh_token).toBe(
       "refresh_token"
     );
 
     await act(() => sleep(12000));
 
-    expect((await UserManagerContext.getUser()).refresh_token).toBe(
+    expect((await UserManagerContext.getUser())?.refresh_token).toBe(
       "refresh_token2"
     );
 
     await act(() => sleep(12000));
 
-    expect(
-      JSON.parse(
-        component.getByTestId("response").getAttribute("data-userdata")
-      ).refresh_token
-    ).toBe("refresh_token3");
+    const str2 = component
+      .getByTestId("response")
+      .getAttribute("data-userdata");
+
+    expect(str2 ? JSON.parse(str2).refresh_token : null).toBe("refresh_token3");
   }, 80000);
 });
 

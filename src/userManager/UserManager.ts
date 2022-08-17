@@ -27,6 +27,7 @@ export class UserManager {
     this.settings = new UserManagerSettingsStore(settings);
 
     this._events = new UserManagerEvents(this.settings);
+    this.listenToLocalStorage();
   }
 
   /** Returns an object used to register for events raised by the `UserManager`. */
@@ -67,6 +68,22 @@ export class UserManager {
 
     this._logger.debug("_loadUser: no user storageString");
     return null;
+  }
+
+  private async listenToLocalStorage() {
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.addEventListener("storage", async (event) => {
+        if (event.key === this._userStoreKey) {
+          if (event.newValue) {
+            this._events.revokeOldAccessTokenTimers(
+              User.fromStorageString(event.newValue)
+            );
+          } else {
+            await this.settings.userStore.remove(this._userStoreKey);
+          }
+        }
+      });
+    }
   }
 
   public async storeUser(user: User | null): Promise<void> {
