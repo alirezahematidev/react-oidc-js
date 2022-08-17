@@ -52,7 +52,6 @@ export class UserManager {
   public async removeUser(): Promise<void> {
     await this.storeUser(null);
     this._logger.info("removeUser: user removed from storage");
-    this._events.unload();
   }
 
   protected get _userStoreKey(): string {
@@ -73,14 +72,25 @@ export class UserManager {
   private async listenToLocalStorage() {
     if (typeof window !== "undefined" && window.localStorage) {
       window.addEventListener("storage", async (event) => {
-        if (event.key === this._userStoreKey) {
+        if (
+          event.key ===
+          this.settings.userStore.getRealStoredKey(this._userStoreKey)
+        ) {
           if (event.newValue) {
-            this._events.revokeOldAccessTokenTimers(
-              User.fromStorageString(event.newValue)
-            );
+            this._logger.debug("New User received from storage event listener");
+
+            this._events.load(User.fromStorageString(event.newValue));
           } else {
+            this._logger.debug("User removed because storage event listener");
+
             await this.settings.userStore.remove(this._userStoreKey);
           }
+        } else if (!event.key) {
+          this._logger.debug(
+            "User removed because storage event listener (clear storage)"
+          );
+
+          await this.settings.userStore.remove(this._userStoreKey);
         }
       });
     }
@@ -91,10 +101,11 @@ export class UserManager {
       this._logger.debug("storeUser: storing user");
       const storageString = user.toStorageString();
       await this.settings.userStore.set(this._userStoreKey, storageString);
-      this._events.revokeOldAccessTokenTimers(user);
+      this._events.load(user);
     } else {
       this._logger.debug("storeUser: removing user");
       await this.settings.userStore.remove(this._userStoreKey);
+      this._events.unload();
     }
   }
 }

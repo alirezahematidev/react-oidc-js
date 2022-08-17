@@ -26,14 +26,14 @@ export class WebStorageStateStore implements StateStore {
   public async set(key: string, value: string): Promise<void> {
     this._logger.debug("set", key);
 
-    key = this._prefix + key;
+    key = this.getRealStoredKey(key);
     await this._store.setItem(key, value);
   }
 
   public get(key: string): Promise<string | null> {
     this._logger.debug("get", key);
 
-    key = this._prefix + key;
+    key = this.getRealStoredKey(key);
     const item = this._store.getItem(key);
     return Promise.resolve(item);
   }
@@ -41,7 +41,7 @@ export class WebStorageStateStore implements StateStore {
   public async remove(key: string): Promise<string | null> {
     this._logger.debug("remove", key);
 
-    key = this._prefix + key;
+    key = this.getRealStoredKey(key);
     const item = await this._store.getItem(key);
     this._store.removeItem(key);
     return Promise.resolve(item);
@@ -59,5 +59,9 @@ export class WebStorageStateStore implements StateStore {
       }
     }
     return keys;
+  }
+
+  public getRealStoredKey(key: string): string {
+    return this._prefix + key;
   }
 }

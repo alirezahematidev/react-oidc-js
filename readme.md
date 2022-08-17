@@ -1,6 +1,6 @@
 ```js
 import { ReactNode } from "react";
-import { createUserManagerContext,useAuth } from "react-oidc-js";
+import { createUserManagerContext, useAuth } from "react-oidc-js";
 
 const {
   Provider,
@@ -24,7 +24,7 @@ const {
         headers: {
           authorization: AUTHORIZATION,
         },
-      },
+      }
     );
 
     return {
@@ -52,4 +52,11 @@ export {
 };
 
 export default UserManagerProvider;
+```
+
+# logger
+
+```js
+import { Log } from "react-oidc-js/lib/utils/Log";
+Log.logger = console;
 ```
