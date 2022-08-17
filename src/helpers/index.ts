@@ -6,17 +6,16 @@ import { UserResponse } from "../types";
 import { Logger } from "../utils/Log";
 
 export const useStoreUserData = () => {
-  const { setUserData, userManager } = useContext(Context);
+  const { userManager } = useContext(Context);
   return async (userData: UserResponse) => {
     Logger.info("Set new user data");
-    return handleSetUserData(userData, userManager, setUserData);
+    return handleSetUserData(userData, userManager);
   };
 };
 
 export const handleSetUserData = async (
   userData: UserResponse,
-  userManager: UserManager,
-  setUserData: (user: User) => void
+  userManager: UserManager
 ) => {
   if (!userData.access_token) return;
 
@@ -40,7 +39,6 @@ export const handleSetUserData = async (
   }
 
   await userManager.storeUser(userConfig);
-  setUserData(userConfig);
 
   return userConfig;
 };

@@ -33,20 +33,22 @@ export const createUserManagerContext = ({
   let _handleAccessTokenExpired: () => Promise<User | null> = async () => null;
   const handleAccessTokenExpired = () => _handleAccessTokenExpired();
 
-  let _removeUser: () => Promise<void> = async () => {
+  const removeUser: () => Promise<void> = async () => {
     await userManager.removeUser();
     Logger.info("User removed");
   };
-  const removeUser = () => _removeUser();
 
   const Provider = ({ children }: { children: ReactNode }) => {
     const [userData, setUserData] = useState<User | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
+    const isMounted = useRef(false);
 
-    _removeUser = useCallback(async () => {
-      await userManager.removeUser();
-      setUserData(null);
-      Logger.info("User removed");
+    useEffect(() => {
+      isMounted.current = true;
+
+      return () => {
+        isMounted.current = false;
+      };
     }, []);
 
     _handleAccessTokenExpired = async () => {
@@ -67,11 +69,7 @@ export const createUserManagerContext = ({
 
           const res = await onRefresh(user);
 
-          const newUser = await handleSetUserData(
-            res,
-            userManager,
-            setUserData
-          );
+          const newUser = await handleSetUserData(res, userManager);
 
           resolve(newUser || null);
 
@@ -92,14 +90,22 @@ export const createUserManagerContext = ({
     useEffect(() => {
       userManager.events.addAccessTokenExpiring(handleAccessTokenExpired);
       userManager.events.addAccessTokenExpired(handleAccessTokenExpired);
+      userManager.events.addUserLoaded((user: User) => {
+        setUserData(user);
+      });
+      userManager.events.addUserUnloaded(() => {
+        if (isMounted.current) {
+          setUserData(null);
+        }
+      });
 
       userManager
         .getUser()
         .then((user) => {
-          setUserData(user);
           setIsLoaded(true);
         })
-        .catch(() => {
+        .catch((reason) => {
+          Logger.error(reason);
           setUserData(null);
           setIsLoaded(true);
         });
@@ -114,10 +120,9 @@ export const createUserManagerContext = ({
         userManager,
         userData,
         isLoaded,
-        setUserData,
         removeUser,
       }),
-      [userData, isLoaded, setUserData, removeUser]
+      [userData, isLoaded, removeUser]
     );
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
