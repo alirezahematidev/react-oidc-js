@@ -27,7 +27,9 @@ export const handleSetUserData = async (
 
   const userConfig = new User({
     session_state: "",
-    scope: decodedAccessToken.scope?.join(" "),
+    scope: Array.isArray(decodedAccessToken.scope)
+      ? decodedAccessToken.scope.join(" ")
+      : decodedAccessToken.scope,
     id_token: decodedAccessToken.iat.toString(),
     profile,
     ...userData,
