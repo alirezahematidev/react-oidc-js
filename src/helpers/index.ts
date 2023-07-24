@@ -13,10 +13,7 @@ export const useStoreUserData = () => {
   };
 };
 
-export const handleSetUserData = async (
-  userData: UserResponse,
-  userManager: UserManager
-) => {
+export const handleSetUserData = async (userData: UserResponse, userManager: UserManager) => {
   if (!userData.access_token) return;
 
   const decodedAccessToken: any = jwtDecode(userData.access_token);
@@ -27,10 +24,8 @@ export const handleSetUserData = async (
 
   const userConfig = new User({
     session_state: "",
-    scope: Array.isArray(decodedAccessToken.scope)
-      ? decodedAccessToken.scope.join(" ")
-      : decodedAccessToken.scope,
-    id_token: decodedAccessToken.iat.toString(),
+    scope: Array.isArray(decodedAccessToken.scope) ? decodedAccessToken.scope.join(" ") : decodedAccessToken.scope,
+    id_token: decodedAccessToken.iat ? decodedAccessToken.iat.toString() : Date.now().toString(),
     profile,
     ...userData,
   });
