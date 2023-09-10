@@ -1,9 +1,4 @@
-import {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from "axios";
+import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from "axios";
 import { User } from "./userManager/User";
 
 function createAxiosMiddle({
@@ -17,10 +12,7 @@ function createAxiosMiddle({
   handleAccessTokenExpired: () => Promise<User | null>;
   removeUser: () => Promise<void>;
 }) {
-  function axiosMiddle(
-    axiosInstance: AxiosInstance,
-    isRefreshTokenRequest: (error: AxiosRequestConfig) => boolean
-  ) {
+  function axiosMiddle(axiosInstance: AxiosInstance, isRefreshTokenRequest: (error: AxiosRequestConfig) => boolean) {
     // Response interceptor
     axiosInstance.interceptors.response.use(
       (async (response: AxiosResponse): Promise<any> => {
@@ -31,21 +23,23 @@ function createAxiosMiddle({
         // Do something with response error
 
         if (error.response) {
-          if (
-            error.response.status === 401 &&
-            isRefreshTokenRequest(error.config)
-          ) {
+          if (error.response.status === 401 && isRefreshTokenRequest(error.config ?? {})) {
             removeUser();
           } else if (error.response.status === 401) {
             const user = await handleAccessTokenExpired();
             if (user?.access_token) {
-              if (!error.config.headers) {
-                error.config.headers = {};
+              if (!error.config?.headers) {
+                if (error.config) {
+                  error.config.headers = {} as AxiosRequestHeaders;
+                }
               }
-              delete error.config.headers.Authorization;
-              error.config.headers.authorization = `bearer ${user?.access_token}`;
+              delete error.config?.headers.Authorization;
 
-              return Promise.resolve(axiosInstance.request(error.config));
+              if (error.config) {
+                error.config.headers.authorization = `bearer ${user?.access_token}`;
+              }
+
+              return Promise.resolve(axiosInstance.request(error.config ?? {}));
             }
 
             removeUser();
@@ -61,10 +55,7 @@ function createAxiosMiddle({
       async (requestConfig) => {
         // Do something before request is sent
         /** Example on how to add authorization based on security */
-        if (
-          !requestConfig?.headers?.authorization &&
-          !requestConfig?.headers?.Authorization
-        ) {
+        if (!requestConfig?.headers?.authorization && !requestConfig?.headers?.Authorization) {
           let user;
           if (isRefreshTokenRequest(requestConfig)) {
             user = await getUser();
@@ -74,7 +65,7 @@ function createAxiosMiddle({
 
           if (user?.access_token) {
             if (!requestConfig?.headers) {
-              requestConfig.headers = {};
+              requestConfig.headers = {} as AxiosRequestHeaders;
             }
             requestConfig.headers.authorization = `bearer ${user?.access_token}`;
           }
