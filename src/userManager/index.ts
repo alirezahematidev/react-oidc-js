@@ -1,3 +1,3 @@
 export { UserManager } from "./UserManager";
-export { User, UserProfile } from "./User";
-export { UserManagerSettings } from "./UserManagerSettings";
+export { User, type UserProfile } from "./User";
+export type { UserManagerSettings } from "./UserManagerSettings";
